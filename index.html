@@ -48,22 +48,25 @@
     controls.update();
 
     // Lights
-    const ambient = new THREE.HemisphereLight(0xffffff, 0x444444, .5);
+    const ambient = new THREE.HemisphereLight(0xffffff, 0x444444, 0.4);
     ambient.position.set(0, 20, 0);
     scene.add(ambient);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 5);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5); // reduced intensity
     directionalLight.position.set(5, 10, 7.5);
     directionalLight.castShadow = true;
-    //directionalLight.intensity = .75; // reduce overall light to soften shadows
-    
-    const fillLight = new THREE.DirectionalLight(0xffffff, 1.5);
+
+    // Optional fill light to soften shadows from other side
+    const fillLight = new THREE.DirectionalLight(0xffffff, 1.0);
     fillLight.position.set(-5, 10, 7.5);
     scene.add(fillLight);
 
     // Shadow settings
-    directionalLight.shadow.mapSize.width = 1024;
-    directionalLight.shadow.mapSize.height = 1024;
+    directionalLight.shadow.mapSize.width = 2048;  // higher resolution
+    directionalLight.shadow.mapSize.height = 2048;
+    directionalLight.shadow.bias = -0.0005;        // small bias to reduce shadow acne
+    directionalLight.shadow.normalBias = 0.02;     // helps soften edge
+
     directionalLight.shadow.camera.near = 0.5;
     directionalLight.shadow.camera.far = 50;
     directionalLight.shadow.camera.left = -10;
@@ -72,14 +75,15 @@
     directionalLight.shadow.camera.bottom = -10;
     scene.add(directionalLight);
 
-    // Ground
+    // Ground with softer shadow blending
     const groundGeo = new THREE.PlaneGeometry(50, 50);
-    const groundMat = new THREE.ShadowMaterial({ opacity: 0.1 });
+    const groundMat = new THREE.ShadowMaterial({ opacity: 0.07 }); // softer
     const ground = new THREE.Mesh(groundGeo, groundMat);
     ground.rotation.x = -Math.PI / 2;
     ground.position.y = 0;
     ground.receiveShadow = true;
     scene.add(ground);
+
 
     // Draco Loader
     const dracoLoader = new DRACOLoader();
