@@ -16,11 +16,6 @@
     import { GLTFLoader } from 'https://esm.sh/three@0.160.1/examples/jsm/loaders/GLTFLoader.js';
     import { DRACOLoader } from 'https://esm.sh/three@0.160.1/examples/jsm/loaders/DRACOLoader.js';
 
-    import { EffectComposer } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/EffectComposer.js';
-    import { RenderPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/RenderPass.js';
-    import { UnrealBloomPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/UnrealBloomPass.js';
-    import { SSAOPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/SSAOPass.js';
-
     // Scene
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xdddddd);
@@ -39,25 +34,6 @@
     renderer.shadowMap.type = THREE.VSMShadowMap;
     renderer.outputEncoding = THREE.sRGBEncoding; 
     document.body.appendChild(renderer.domElement);
-
-    // Setup Effect Composer for postprocessing
-    const composer = new EffectComposer(renderer);
-    composer.addPass(new RenderPass(scene, camera));
-
-    // SSAO pass to simulate soft ambient shadows
-    const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
-    ssaoPass.kernelRadius = 16;           // Larger radius = softer AO
-    ssaoPass.minDistance = 0.001;
-    ssaoPass.maxDistance = 0.1;
-    composer.addPass(ssaoPass);
-
-    // (Optional) Bloom for lighting enhancement
-    // const bloomPass = new UnrealBloomPass(
-    //   new THREE.Vector2(window.innerWidth, window.innerHeight),
-    //   0.1, 0.4, 0.85
-    // );
-    // composer.addPass(bloomPass);
-
 
     // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -137,12 +113,11 @@
     });
 
     // Animate
-        function animate() {
+    function animate() {
       requestAnimationFrame(animate);
       controls.update();
-      composer.render(); // ⬅️ postprocessed render
-      }
-
+      renderer.render(scene, camera);
+    }
     animate();
 
     // Resize
