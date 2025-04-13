@@ -62,10 +62,10 @@
     scene.add(fillLight);
 
     // Shadow settings
-    directionalLight.shadow.mapSize.width = 1024;  // higher resolution
-    directionalLight.shadow.mapSize.height = 1024;
+    directionalLight.shadow.mapSize.width = 64;  // higher resolution
+    directionalLight.shadow.mapSize.height = 64;
     directionalLight.shadow.bias = -0.0005;        // small bias to reduce shadow acne
-    directionalLight.shadow.normalBias = 0.01;     // helps soften edge
+    directionalLight.shadow.normalBias = 0.005;     // helps soften edge
 
     directionalLight.shadow.camera.near = 0.5;
     directionalLight.shadow.camera.far = 50;
