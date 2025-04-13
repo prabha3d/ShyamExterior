@@ -48,7 +48,7 @@
 
     // SSAO pass to simulate soft ambient shadows
     const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
-    ssaoPass.kernelRadius = 24;           // 👈 Increase for blurrier shadows
+    ssaoPass.kernelRadius = 0;           // Increase for blurrier shadows
     ssaoPass.minDistance = 0.001;         // Minimum occlusion distance
     ssaoPass.maxDistance = 0.1;           // Max distance at which occlusion is calculated
     composer.addPass(ssaoPass);
