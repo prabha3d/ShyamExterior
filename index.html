@@ -31,8 +31,8 @@
     //renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     //renderer.shadowMap.type = THREE.PCFShadowMap;
     //renderer.shadowMap.type = THREE.BasicShadowMap;
-    //renderer.shadowMap.type = THREE.VSMShadowMap;
-    //renderer.outputEncoding = THREE.sRGBEncoding; 
+    renderer.shadowMap.type = THREE.VSMShadowMap;
+    renderer.outputEncoding = THREE.sRGBEncoding; 
     document.body.appendChild(renderer.domElement);
 
     // Controls
@@ -52,7 +52,7 @@
     ambient.position.set(0, 20, 0);
     scene.add(ambient);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 5);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 15);
     directionalLight.position.set(5, 10, 7.5);
     directionalLight.castShadow = true;
     //directionalLight.intensity = .75; // reduce overall light to soften shadows
