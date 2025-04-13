@@ -30,7 +30,7 @@
     camera.position.set(6, 4, 10);
 
     // Renderer
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: false });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     //renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -81,17 +81,17 @@
     directionalLight.castShadow = true;
 
     // Shadow settings
-    // directionalLight.shadow.mapSize.width = 64;  // higher resolution
-    // directionalLight.shadow.mapSize.height = 64;
-    // directionalLight.shadow.bias = -0.0005;        // small bias to reduce shadow acne
-    // directionalLight.shadow.normalBias = 0.005;     // helps soften edge
+    directionalLight.shadow.mapSize.width = 64;  // higher resolution
+    directionalLight.shadow.mapSize.height = 64;
+    directionalLight.shadow.bias = -0.0005;        // small bias to reduce shadow acne
+    directionalLight.shadow.normalBias = 0.005;     // helps soften edge
 
-    // directionalLight.shadow.camera.near = 0.5;
-    // directionalLight.shadow.camera.far = 50;
-    // directionalLight.shadow.camera.left = -10;
-    // directionalLight.shadow.camera.right = 10;
-    // directionalLight.shadow.camera.top = 10;
-    // directionalLight.shadow.camera.bottom = -10;
+    directionalLight.shadow.camera.near = 0.5;
+    directionalLight.shadow.camera.far = 50;
+    directionalLight.shadow.camera.left = -10;
+    directionalLight.shadow.camera.right = 10;
+    directionalLight.shadow.camera.top = 10;
+    directionalLight.shadow.camera.bottom = -10;
     scene.add(directionalLight);
 
     // Optional fill light to soften shadows from other side
