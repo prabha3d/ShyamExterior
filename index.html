@@ -46,7 +46,7 @@
 
     // SSAO pass to simulate soft ambient shadows
     const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
-    ssaoPass.kernelRadius = 2;           // Larger radius = softer AO
+    ssaoPass.kernelRadius = .1;           // Larger radius = softer AO
     ssaoPass.minDistance = 0.001;
     ssaoPass.maxDistance = 0.1;
     composer.addPass(ssaoPass);
