@@ -53,35 +53,6 @@
     ssaoPass.maxDistance = 0.1;           // Max distance at which occlusion is calculated
     composer.addPass(ssaoPass);
 
-    // Live control panel
-    const gui = new dat.GUI();
-
-    // SSAO Settings
-    const ssaoSettings = {
-      kernelRadius: ssaoPass.kernelRadius,
-      minDistance: ssaoPass.minDistance,
-      maxDistance: ssaoPass.maxDistance,
-    };
-
-    const ssaoFolder = gui.addFolder('SSAO');
-    ssaoFolder.add(ssaoSettings, 'kernelRadius', 1, 64).step(1).name('Blur Radius').onChange(v => ssaoPass.kernelRadius = v);
-    ssaoFolder.add(ssaoSettings, 'minDistance', 0.0001, 0.05).step(0.0001).name('Min Distance').onChange(v => ssaoPass.minDistance = v);
-    ssaoFolder.add(ssaoSettings, 'maxDistance', 0.01, 1).step(0.01).name('Max Distance').onChange(v => ssaoPass.maxDistance = v);
-    ssaoFolder.open();
-
-    // Light Settings
-    const lightFolder = gui.addFolder('Lights');
-
-    const lightSettings = {
-      directional: directionalLight.intensity,
-      ambient: ambient.intensity
-    };
-
-    lightFolder.add(lightSettings, 'directional', 0, 10).step(0.1).name('Directional Intensity').onChange(v => directionalLight.intensity = v);
-    lightFolder.add(lightSettings, 'ambient', 0, 2).step(0.05).name('Ambient Intensity').onChange(v => ambient.intensity = v);
-    lightFolder.open();
-
-
     // (Optional) Bloom for lighting enhancement
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
@@ -129,6 +100,34 @@
     const fillLight = new THREE.DirectionalLight(0xffffff, 1.0);
     fillLight.position.set(-5, 10, 7.5);
     scene.add(fillLight);
+
+    // Live control panel
+    const gui = new dat.GUI();
+
+    // SSAO Settings
+    const ssaoSettings = {
+      kernelRadius: ssaoPass.kernelRadius,
+      minDistance: ssaoPass.minDistance,
+      maxDistance: ssaoPass.maxDistance,
+    };
+
+    const ssaoFolder = gui.addFolder('SSAO');
+    ssaoFolder.add(ssaoSettings, 'kernelRadius', 1, 64).step(1).name('Blur Radius').onChange(v => ssaoPass.kernelRadius = v);
+    ssaoFolder.add(ssaoSettings, 'minDistance', 0.0001, 0.05).step(0.0001).name('Min Distance').onChange(v => ssaoPass.minDistance = v);
+    ssaoFolder.add(ssaoSettings, 'maxDistance', 0.01, 1).step(0.01).name('Max Distance').onChange(v => ssaoPass.maxDistance = v);
+    ssaoFolder.open();
+
+    // Light Settings
+    const lightFolder = gui.addFolder('Lights');
+
+    const lightSettings = {
+      directional: directionalLight.intensity,
+      ambient: ambient.intensity
+    };
+
+    lightFolder.add(lightSettings, 'directional', 0, 10).step(0.1).name('Directional Intensity').onChange(v => directionalLight.intensity = v);
+    lightFolder.add(lightSettings, 'ambient', 0, 2).step(0.05).name('Ambient Intensity').onChange(v => ambient.intensity = v);
+    lightFolder.open();
 
     // Ground with softer shadow blending
     const groundGeo = new THREE.PlaneGeometry(50, 50);
