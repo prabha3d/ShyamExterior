@@ -48,24 +48,24 @@
     controls.update();
 
     // Lights
-    const ambient = new THREE.HemisphereLight(0xffffff, 0x444444, 0.4);
+    const ambient = new THREE.HemisphereLight(0xffffff, 0x444444, 0.35);
     ambient.position.set(0, 20, 0);
     scene.add(ambient);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5); // reduced intensity
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 2.2); // reduced intensity
     directionalLight.position.set(5, 10, 7.5);
     directionalLight.castShadow = true;
 
     // Optional fill light to soften shadows from other side
-    const fillLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.9);
     fillLight.position.set(-5, 10, 7.5);
     scene.add(fillLight);
 
     // Shadow settings
     directionalLight.shadow.mapSize.width = 1024;  // higher resolution
     directionalLight.shadow.mapSize.height = 1024;
-    directionalLight.shadow.bias = -0.0005;        // small bias to reduce shadow acne
-    directionalLight.shadow.normalBias = 0.02;     // helps soften edge
+    directionalLight.shadow.bias = -0.001;        // small bias to reduce shadow acne
+    directionalLight.shadow.normalBias = 0.05;     // helps soften edge
 
     directionalLight.shadow.camera.near = 0.5;
     directionalLight.shadow.camera.far = 50;
@@ -101,10 +101,10 @@
           node.castShadow = true;
           node.receiveShadow = true;
 
-          // Optional: brighten shadows slightly
-          if (node.material && node.material.color) {
-            node.material.color.multiplyScalar(1.1);
-          }
+          // // Optional: brighten shadows slightly
+          // if (node.material && node.material.color) {
+          //   node.material.color.multiplyScalar(1.1);
+          // }
         }
       });
       scene.add(gltf.scene);
