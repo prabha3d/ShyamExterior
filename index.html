@@ -48,16 +48,16 @@
     controls.update();
 
     // Lights
-    const ambient = new THREE.HemisphereLight(0xffffff, 0x444444, 0.4);
+    const ambient = new THREE.HemisphereLight(0xffffff, 0x444444, .5);
     ambient.position.set(0, 20, 0);
     scene.add(ambient);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, .15);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 5);
     directionalLight.position.set(5, 10, 7.5);
     directionalLight.castShadow = true;
-    directionalLight.intensity = 0.15; // reduce overall light to soften shadows
+    //directionalLight.intensity = .75; // reduce overall light to soften shadows
     
-    const fillLight = new THREE.DirectionalLight(0xffffff, 1);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 1.5);
     fillLight.position.set(-5, 10, 7.5);
     scene.add(fillLight);
 
@@ -96,11 +96,6 @@
         if (node.isMesh) {
           node.castShadow = true;
           node.receiveShadow = true;
-
-          // Optional: brighten shadows slightly
-          if (node.material && node.material.color) {
-            node.material.color.multiplyScalar(1.1);
-          }
         }
       });
       scene.add(gltf.scene);
