@@ -65,7 +65,7 @@
     directionalLight.shadow.mapSize.width = 1024;  // higher resolution
     directionalLight.shadow.mapSize.height = 1024;
     directionalLight.shadow.bias = -0.0005;        // small bias to reduce shadow acne
-    directionalLight.shadow.normalBias = 0.01;     // helps soften edge
+    directionalLight.shadow.normalBias = 1;     // helps soften edge
 
     directionalLight.shadow.camera.near = 0.5;
     directionalLight.shadow.camera.far = 50;
@@ -101,10 +101,10 @@
           node.castShadow = true;
           node.receiveShadow = true;
 
-          // Optional: brighten shadows slightly
-          if (node.material && node.material.color) {
-            node.material.color.multiplyScalar(1.05);
-          }
+          // // Optional: brighten shadows slightly
+          // if (node.material && node.material.color) {
+          //   node.material.color.multiplyScalar(1.05);
+          // }
         }
       });
       scene.add(gltf.scene);
