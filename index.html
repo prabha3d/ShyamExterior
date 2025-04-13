@@ -16,10 +16,12 @@
     import { GLTFLoader } from 'https://esm.sh/three@0.160.1/examples/jsm/loaders/GLTFLoader.js';
     import { DRACOLoader } from 'https://esm.sh/three@0.160.1/examples/jsm/loaders/DRACOLoader.js';
 
-    // import { EffectComposer } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/EffectComposer.js';
-    // import { RenderPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/RenderPass.js';
-    // import { UnrealBloomPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/UnrealBloomPass.js';
-    // import { SSAOPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/SSAOPass.js';
+    import * as dat from 'https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.module.js';
+
+    import { EffectComposer } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/UnrealBloomPass.js';
+    import { SSAOPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/SSAOPass.js';
 
     // Scene
     const scene = new THREE.Scene();
@@ -40,23 +42,33 @@
     renderer.outputEncoding = THREE.sRGBEncoding; 
     document.body.appendChild(renderer.domElement);
 
-    // // Setup Effect Composer for postprocessing
-    // const composer = new EffectComposer(renderer);
-    // composer.addPass(new RenderPass(scene, camera));
+    // Setup Effect Composer for postprocessing
+    const composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
 
-    // // SSAO pass to simulate soft ambient shadows
-    // const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
-    // ssaoPass.kernelRadius = 1;           // Larger radius = softer AO
-    // ssaoPass.minDistance = 0.001;
-    // ssaoPass.maxDistance = 0.1;
-    // composer.addPass(ssaoPass);
+    // SSAO pass to simulate soft ambient shadows
+    const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
+    ssaoPass.kernelRadius = 24;           // 👈 Increase for blurrier shadows
+    ssaoPass.minDistance = 0.001;         // Minimum occlusion distance
+    ssaoPass.maxDistance = 0.1;           // Max distance at which occlusion is calculated
+    composer.addPass(ssaoPass);
 
-    // // (Optional) Bloom for lighting enhancement
-    // const bloomPass = new UnrealBloomPass(
-    //   new THREE.Vector2(window.innerWidth, window.innerHeight),
-    //   0.1, 0.4, 0.85
-    // );
-    // composer.addPass(bloomPass);
+    // Live control with dat.GUI
+    const gui = new dat.GUI();
+    const ssaoSettings = {
+      kernelRadius: ssaoPass.kernelRadius
+    };
+
+    gui.add(ssaoSettings, 'kernelRadius', 1, 64).step(1).name('Blur Radius').onChange(value => {
+      ssaoPass.kernelRadius = value;
+    });
+
+    // (Optional) Bloom for lighting enhancement
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      0.1, 0.4, 0.85
+    );
+    composer.addPass(bloomPass);
 
 
     // Controls
@@ -140,8 +152,8 @@
         function animate() {
       requestAnimationFrame(animate);
       controls.update();
-      // composer.render(); // ⬅️ postprocessed render
-      renderer.render(scene, camera);
+      composer.render(); // ⬅️ postprocessed render
+      // renderer.render(scene, camera);
       }
 
     animate();
