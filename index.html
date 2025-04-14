@@ -101,6 +101,7 @@
   loader.load('Shyam.glb', (gltf) => {
   const colorFolder = gui.addFolder("Colors");
   const materialTracker = {};
+  const originalColors = {};
 
   gltf.scene.traverse((node) => {
     if (node.isMesh) {
@@ -112,27 +113,56 @@
       materials.forEach((mat) => {
         if (!mat || !mat.name) return;
 
-        console.log("Found material:", mat.name); // 🔍 Debug log
+        console.log("Found material:", mat.name); // Debugging
 
         if ((mat.name === "Color1" || mat.name === "Color2" || mat.name === "DarkGrey") && !materialTracker[mat.name]) {
-          const colorObj = { color: `#${mat.color.getHexString()}` };
+          const originalColorHex = `#${mat.color.getHexString()}`;
+          originalColors[mat.name] = originalColorHex;
+
+          const colorObj = { color: originalColorHex };
 
           colorFolder
             .addColor(colorObj, 'color')
             .name(mat.name)
-            .onChange((value) => mat.color.set(value));
+            .onChange((value) => {
+              mat.color.set(value);
+            });
 
-          materialTracker[mat.name] = true;
+          // Store reference to allow resetting later
+          materialTracker[mat.name] = {
+            material: mat,
+            colorObj,
+          };
         }
       });
     }
   });
 
-  colorFolder.open(); // Open the folder automatically
+  // Reset Button
+  const resetColors = {
+    reset: () => {
+      for (const name in materialTracker) {
+        const { material, colorObj } = materialTracker[name];
+        const original = originalColors[name];
+        if (material && original) {
+          colorObj.color = original;
+          material.color.set(original);
+        }
+      }
+
+      // Force GUI to refresh
+      gui.updateDisplay();
+    }
+  };
+
+  colorFolder.add(resetColors, 'reset').name("↺ Reset Colors");
+  colorFolder.open();
+
   scene.add(gltf.scene);
 }, undefined, (error) => {
   console.error('Error loading model:', error);
 });
+
 
 
   function animate() {
