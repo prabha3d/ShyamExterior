@@ -17,6 +17,7 @@
     import { DRACOLoader } from 'https://esm.sh/three@0.160.1/examples/jsm/loaders/DRACOLoader.js';
 
     import * as dat from 'https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.module.js';
+    
 
     import { EffectComposer } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/EffectComposer.js';
     import { RenderPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/RenderPass.js';
@@ -186,21 +187,29 @@
 
     // Load model
     loader.load('Shyam.glb', (gltf) => {
-      gltf.scene.traverse((node) => {
-        if (node.isMesh) {
-          node.castShadow = true;
-          node.receiveShadow = true;
+  const gui = new dat.GUI();
 
-          // // Optional: brighten shadows slightly
-          // if (node.material && node.material.color) {
-          //   node.material.color.multiplyScalar(1.05);
-          // }
-        }
-      });
-      scene.add(gltf.scene);
-    }, undefined, (error) => {
-      console.error('Error loading model:', error);
-    });
+  gltf.scene.traverse((node) => {
+    if (node.isMesh && node.material) {
+      node.castShadow = true;
+      node.receiveShadow = true;
+
+      // Check material name and create GUI control
+      if (node.material.name === "Color1" || node.material.name === "Color2") {
+        const mat = node.material;
+        const colorObj = { color: `#${mat.color.getHexString()}` };
+
+        gui.addColor(colorObj, 'color').name(mat.name).onChange((value) => {
+          mat.color.set(value);
+        });
+      }
+    }
+  });
+
+  scene.add(gltf.scene);
+}, undefined, (error) => {
+  console.error('Error loading model:', error);
+});
 
     // Animate
         function animate() {
