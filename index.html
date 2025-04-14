@@ -99,30 +99,41 @@
   loader.setDRACOLoader(dracoLoader);
 
   loader.load('Shyam.glb', (gltf) => {
-    const materialTracker = {};
+  const colorFolder = gui.addFolder("Colors");
+  const materialTracker = {};
 
-    gltf.scene.traverse((node) => {
-      if (node.isMesh && node.material) {
-        node.castShadow = true;
-        node.receiveShadow = true;
+  gltf.scene.traverse((node) => {
+    if (node.isMesh) {
+      node.castShadow = true;
+      node.receiveShadow = true;
 
-        const mat = node.material;
-        const matName = mat.name;
+      const materials = Array.isArray(node.material) ? node.material : [node.material];
 
-        if ((matName === "Color1" || matName === "Color2") && !materialTracker[matName]) {
+      materials.forEach((mat) => {
+        if (!mat || !mat.name) return;
+
+        console.log("Found material:", mat.name); // 🔍 Debug log
+
+        if ((mat.name === "Color1" || mat.name === "Color2") && !materialTracker[mat.name]) {
           const colorObj = { color: `#${mat.color.getHexString()}` };
-          gui.addColor(colorObj, 'color').name(matName).onChange((value) => {
-            mat.color.set(value);
-          });
-          materialTracker[matName] = true;
-        }
-      }
-    });
 
-    scene.add(gltf.scene);
-  }, undefined, (error) => {
-    console.error('Error loading model:', error);
+          colorFolder
+            .addColor(colorObj, 'color')
+            .name(mat.name)
+            .onChange((value) => mat.color.set(value));
+
+          materialTracker[mat.name] = true;
+        }
+      });
+    }
   });
+
+  colorFolder.open(); // Open the folder automatically
+  scene.add(gltf.scene);
+}, undefined, (error) => {
+  console.error('Error loading model:', error);
+});
+
 
   function animate() {
     requestAnimationFrame(animate);
