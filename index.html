@@ -114,7 +114,7 @@
 
         console.log("Found material:", mat.name); // 🔍 Debug log
 
-        if ((mat.name === "Color1" || mat.name === "Color2") && !materialTracker[mat.name]) {
+        if ((mat.name === "Color1" || mat.name === "Color2" || mat.name === "DarkGrey") && !materialTracker[mat.name]) {
           const colorObj = { color: `#${mat.color.getHexString()}` };
 
           colorFolder
