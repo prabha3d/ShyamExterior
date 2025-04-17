@@ -4,16 +4,17 @@
   <meta charset="UTF-8" />
   <title>Three.js GLB Color GUI with Reset</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lil-gui@0.18/dist/lil-gui.min.css">
+  <link rel="icon" href="data:,">
 
   <style>
     .lil-gui {
-      width: 300px;
-      name-width: 120px;
-      font-size: 15px;
-      padding: 10px;
+      --width: 300px;
+      ---name-width: 120px;
+      --font-size: 15px;
+      --padding: 10px;
       background-color: rgba(0, 0, 0, 0.308);
-      widget-color: #08f;
-      text-color: #eee;
+      --widget-color: #08f;
+      --text-color: #eee;
       border-radius: 10px;
     }
   </style>
@@ -43,7 +44,7 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.VSMShadowMap;
-    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     document.body.appendChild(renderer.domElement);
 
     // Postprocessing
