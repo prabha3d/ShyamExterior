@@ -17,11 +17,35 @@
       --text-color: #eee;
       border-radius: 10px;
     }
+
+    #resetViewBtn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 16px;
+    background-color: #222;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+  }
+
+  #resetViewBtn:hover {
+    opacity: 1;
+    background-color: #000;
+  }
+
   </style>
 
   
 </head>
 <body>
+
+  <button id="resetViewBtn">↺ Reset View</button>
+
   <script type="module">
     import * as THREE from 'https://esm.sh/three@0.160.1';
     import { OrbitControls } from 'https://esm.sh/three@0.160.1/examples/jsm/controls/OrbitControls.js';
@@ -150,17 +174,6 @@
         }
       }}, 'reset').name("↺ Reset Colors");
 
-      // Reset View Button
-      const viewReset = {
-        resetView: () => {
-          camera.position.set(6, 4, 10);         // Original camera position
-          controls.target.set(0, 4, -5);         // Original orbit target
-          controls.update();
-        }
-      };
-      gui.add(viewReset, 'resetView').name("↺ Reset View");
-
-
       scene.add(gltf.scene);
     }, undefined, (err) => {
       console.error("Model load error:", err);
@@ -174,6 +187,12 @@
     }
     animate();
 
+    document.getElementById("resetViewBtn").addEventListener("click", () => {
+      camera.position.set(6, 4, 10);         // Reset camera position
+      controls.target.set(0, 4, -5);         // Reset orbit target
+      controls.update();
+    });
+
     // Handle window resize
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -182,5 +201,8 @@
       // composer.setSize(window.innerWidth, window.innerHeight);
     });
   </script>
+
+
+
 </body>
 </html>
