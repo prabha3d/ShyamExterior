@@ -6,7 +6,54 @@
   <style>
     body { margin: 0; overflow: hidden; }
     canvas { display: block; }
+  
+    /* Style dat.GUI */
+    .dg.ac {
+      font-size: 16px !important;
+      width: 300px !important;
+      background: rgba(30, 30, 30, 0.9) !important;
+      color: #eee !important;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    }
+  
+    .dg .cr.number, .dg .cr.string, .dg .cr.boolean, .dg .cr.function {
+      height: 36px !important;
+      line-height: 36px !important;
+    }
+  
+    .dg .c input[type="text"],
+    .dg .c input[type="color"] {
+      height: 28px !important;
+      font-size: 15px !important;
+    }
+  
+    .dg .c input[type="color"] {
+      border: none;
+      margin-top: 4px;
+      padding: 0;
+    }
+  
+    .dg .c .property-name {
+      font-weight: bold;
+    }
+  
+    .dg .close-button {
+      font-size: 16px !important;
+      padding: 6px;
+      top: 4px !important;
+      right: 6px !important;
+    }
+  
+    .dg .title {
+      font-size: 17px !important;
+      font-weight: bold;
+      background: #111 !important;
+      color: #eee !important;
+      border-radius: 6px 6px 0 0;
+    }
   </style>
+  
 </head>
 <body>
   <script type="module">
