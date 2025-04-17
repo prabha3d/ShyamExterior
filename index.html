@@ -20,9 +20,7 @@
   import { OrbitControls } from 'https://esm.sh/three@0.160.1/examples/jsm/controls/OrbitControls.js';
   import { GLTFLoader } from 'https://esm.sh/three@0.160.1/examples/jsm/loaders/GLTFLoader.js';
   import { DRACOLoader } from 'https://esm.sh/three@0.160.1/examples/jsm/loaders/DRACOLoader.js';
-  import GUI from 'https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.module.js';
-  
-
+  import dat from 'https://esm.sh/dat.gui@0.7.9';
   import { EffectComposer } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/EffectComposer.js';
   import { RenderPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/RenderPass.js';
   import { UnrealBloomPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/UnrealBloomPass.js';
@@ -90,7 +88,7 @@
   fillLight.position.set(-5, 10, 7.5);
   scene.add(fillLight);
 
-  const gui = new GUI();
+  const gui = new dat.GUI();
 
   const groundGeo = new THREE.PlaneGeometry(50, 50);
   const groundMat = new THREE.ShadowMaterial({ opacity: 0.07 });
