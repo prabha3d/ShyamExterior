@@ -130,6 +130,17 @@
         gui.updateDisplay();
       }}, 'reset').name("↺ Reset Colors");
 
+      // Reset View Button
+      const viewReset = {
+        resetView: () => {
+          camera.position.set(6, 4, 10);         // Original camera position
+          controls.target.set(0, 4, -5);         // Original orbit target
+          controls.update();
+        }
+      };
+      gui.add(viewReset, 'resetView').name("↺ Reset View");
+
+
       scene.add(gltf.scene);
     }, undefined, (err) => {
       console.error("Model load error:", err);
