@@ -3,56 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <title>Three.js GLB Color GUI with Reset</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lil-gui@0.18/dist/lil-gui.min.css">
+
   <style>
-    body { margin: 0; overflow: hidden; }
-    canvas { display: block; }
-  
-    /* Style dat.GUI */
-    .dg.ac {
-      font-size: 16px !important;
-      width: 300px !important;
-      background: rgba(30, 30, 30, 0.9) !important;
-      color: #eee !important;
-      border-radius: 8px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
-    }
-  
-    .dg .cr.number, .dg .cr.string, .dg .cr.boolean, .dg .cr.function {
-      height: 36px !important;
-      line-height: 36px !important;
-    }
-  
-    .dg .c input[type="text"],
-    .dg .c input[type="color"] {
-      height: 28px !important;
-      font-size: 15px !important;
-    }
-  
-    .dg .c input[type="color"] {
-      border: none;
-      margin-top: 4px;
-      padding: 0;
-    }
-  
-    .dg .c .property-name {
-      font-weight: bold;
-    }
-  
-    .dg .close-button {
-      font-size: 16px !important;
-      padding: 6px;
-      top: 4px !important;
-      right: 6px !important;
-    }
-  
-    .dg .title {
-      font-size: 17px !important;
-      font-weight: bold;
-      background: #111 !important;
-      color: #eee !important;
-      border-radius: 6px 6px 0 0;
+    .lil-gui {
+      --width: 300px;
+      --name-width: 120px;
+      font-size: 15px;
+      --padding: 10px;
+      --background-color: rgba(20, 20, 20, 0.95);
+      --widget-color: #08f;
+      --text-color: #eee;
+      border-radius: 10px;
     }
   </style>
+
   
 </head>
 <body>
@@ -61,7 +26,7 @@
     import { OrbitControls } from 'https://esm.sh/three@0.160.1/examples/jsm/controls/OrbitControls.js';
     import { GLTFLoader } from 'https://esm.sh/three@0.160.1/examples/jsm/loaders/GLTFLoader.js';
     import { DRACOLoader } from 'https://esm.sh/three@0.160.1/examples/jsm/loaders/DRACOLoader.js';
-    import dat from 'https://esm.sh/dat.gui@0.7.9';
+    import GUI from 'https://cdn.jsdelivr.net/npm/lil-gui@0.18/+esm';
     import { EffectComposer } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/EffectComposer.js';
     import { RenderPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/RenderPass.js';
     import { UnrealBloomPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/UnrealBloomPass.js';
@@ -123,10 +88,15 @@
     ground.receiveShadow = true;
     scene.add(ground);
 
-    // GUI for color controls
-    const gui = new dat.GUI();
+    // Init lil-gui
+    const gui = new GUI({ width: 300 });
     const colorFolder = gui.addFolder("Colors");
     colorFolder.open();
+
+    // Track materials and colors
+    const materialTracker = {};
+    const originalColors = {};
+
 
     const materialTracker = {};
     const originalColors = {};
