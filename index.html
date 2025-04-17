@@ -2,177 +2,154 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Three.js Responsive GLB Viewer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Three.js GLB Color GUI with Reset</title>
   <style>
     body { margin: 0; overflow: hidden; }
     canvas { display: block; }
-    .dg.ac {
-      z-index: 10;
-      max-height: 90vh;
-      overflow: auto;
-    }
   </style>
 </head>
 <body>
-<script type="module">
-  import * as THREE from 'https://esm.sh/three@0.160.1';
-  import { OrbitControls } from 'https://esm.sh/three@0.160.1/examples/jsm/controls/OrbitControls.js';
-  import { GLTFLoader } from 'https://esm.sh/three@0.160.1/examples/jsm/loaders/GLTFLoader.js';
-  import { DRACOLoader } from 'https://esm.sh/three@0.160.1/examples/jsm/loaders/DRACOLoader.js';
-  import dat from 'https://esm.sh/dat.gui@0.7.9';
-  import { EffectComposer } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/EffectComposer.js';
-  import { RenderPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/RenderPass.js';
-  import { UnrealBloomPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/UnrealBloomPass.js';
-  import { SSAOPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/SSAOPass.js';
+  <script type="module">
+    import * as THREE from 'https://esm.sh/three@0.160.1';
+    import { OrbitControls } from 'https://esm.sh/three@0.160.1/examples/jsm/controls/OrbitControls.js';
+    import { GLTFLoader } from 'https://esm.sh/three@0.160.1/examples/jsm/loaders/GLTFLoader.js';
+    import { DRACOLoader } from 'https://esm.sh/three@0.160.1/examples/jsm/loaders/DRACOLoader.js';
+    import dat from 'https://esm.sh/dat.gui@0.7.9';
+    import { EffectComposer } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/UnrealBloomPass.js';
+    import { SSAOPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/SSAOPass.js';
 
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xdddddd);
+    // Scene setup
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xdddddd);
 
-  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(6, 4, 10);
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(6, 4, 10);
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.VSMShadowMap;
-  renderer.outputEncoding = THREE.sRGBEncoding;
-  document.body.appendChild(renderer.domElement);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.VSMShadowMap;
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    document.body.appendChild(renderer.domElement);
 
-  const composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
+    // Postprocessing
+    const composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    composer.addPass(new SSAOPass(scene, camera, window.innerWidth, window.innerHeight));
+    composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.1, 0.4, 0.85));
 
-  const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
-  ssaoPass.kernelRadius = 0;
-  ssaoPass.minDistance = 0.001;
-  ssaoPass.maxDistance = 0.1;
-  composer.addPass(ssaoPass);
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.target.set(0, 4, -5);
+    controls.enableDamping = true;
+    controls.update();
 
-  const bloomPass = new UnrealBloomPass(
-    new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.1, 0.4, 0.85
-  );
-  composer.addPass(bloomPass);
+    // Lighting
+    const ambient = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
+    scene.add(ambient);
 
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 4, -5);
-  controls.enableDamping = true;
-  controls.minDistance = 5;
-  controls.maxDistance = 30;
-  controls.minAzimuthAngle = -Math.PI / 12;
-  controls.maxAzimuthAngle = Math.PI / 2;
-  controls.minPolarAngle = Math.PI / 2.5;
-  controls.maxPolarAngle = Math.PI / 1.75;
-  controls.update();
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
+    directionalLight.position.set(5, 10, 7.5);
+    directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize.set(1028, 1028);
+    directionalLight.shadow.bias = -0.0005;
+    directionalLight.shadow.normalBias = 0.005;
+    scene.add(directionalLight);
 
-  const ambient = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
-  ambient.position.set(0, 20, 0);
-  scene.add(ambient);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    fillLight.position.set(-5, 10, 7.5);
+    scene.add(fillLight);
 
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
-  directionalLight.position.set(5, 10, 7.5);
-  directionalLight.castShadow = true;
-  directionalLight.shadow.mapSize.set(1028, 1028);
-  directionalLight.shadow.bias = -0.0005;
-  directionalLight.shadow.normalBias = 0.005;
-  directionalLight.shadow.camera.near = 0.5;
-  directionalLight.shadow.camera.far = 50;
-  directionalLight.shadow.camera.left = -10;
-  directionalLight.shadow.camera.right = 10;
-  directionalLight.shadow.camera.top = 10;
-  directionalLight.shadow.camera.bottom = -10;
-  scene.add(directionalLight);
+    // Ground
+    const groundGeo = new THREE.PlaneGeometry(50, 50);
+    const groundMat = new THREE.ShadowMaterial({ opacity: 0.07 });
+    const ground = new THREE.Mesh(groundGeo, groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
 
-  const fillLight = new THREE.DirectionalLight(0xffffff, 1.0);
-  fillLight.position.set(-5, 10, 7.5);
-  scene.add(fillLight);
-
-  const gui = new dat.GUI();
-
-  const groundGeo = new THREE.PlaneGeometry(50, 50);
-  const groundMat = new THREE.ShadowMaterial({ opacity: 0.07 });
-  const ground = new THREE.Mesh(groundGeo, groundMat);
-  ground.rotation.x = -Math.PI / 2;
-  ground.receiveShadow = true;
-  scene.add(ground);
-
-  const dracoLoader = new DRACOLoader();
-  dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
-  dracoLoader.setDecoderConfig({ type: 'js' });
-
-  const loader = new GLTFLoader();
-  loader.setDRACOLoader(dracoLoader);
-
-  loader.load('Shyam.glb', (gltf) => {
+    // GUI for color controls
+    const gui = new dat.GUI();
     const colorFolder = gui.addFolder("Colors");
+    colorFolder.open();
+
     const materialTracker = {};
     const originalColors = {};
 
-    gltf.scene.traverse((node) => {
-      if (node.isMesh) {
-        node.castShadow = true;
-        node.receiveShadow = true;
+    // Load model
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+    dracoLoader.setDecoderConfig({ type: 'js' });
 
-        const materials = Array.isArray(node.material) ? node.material : [node.material];
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
 
-        materials.forEach((mat) => {
-          if (!mat || !mat.name) return;
-          if ((mat.name === "Color1" || mat.name === "Color2" || mat.name === "DarkGrey") && !materialTracker[mat.name]) {
-            const originalColorHex = `#${mat.color.getHexString()}`;
-            originalColors[mat.name] = originalColorHex;
-            const colorObj = { color: originalColorHex };
+    loader.load('Shyam.glb', (gltf) => {
+      gltf.scene.traverse((node) => {
+        if (node.isMesh) {
+          node.castShadow = true;
+          node.receiveShadow = true;
 
-            colorFolder
-              .addColor(colorObj, 'color')
-              .name(mat.name)
-              .onChange((value) => {
-                mat.color.set(value);
-              });
+          const materials = Array.isArray(node.material) ? node.material : [node.material];
 
-            materialTracker[mat.name] = { material: mat, colorObj };
-          }
-        });
-      }
-    });
+          materials.forEach((mat) => {
+            if (!mat || !mat.name) return;
 
-    const resetColors = {
-      reset: () => {
+            if (["Color1", "Color2", "DarkGrey"].includes(mat.name) && !materialTracker[mat.name]) {
+              const hex = `#${mat.color.getHexString()}`;
+              originalColors[mat.name] = hex;
+
+              const colorObj = { color: hex };
+
+              colorFolder
+                .addColor(colorObj, 'color')
+                .name(mat.name)
+                .onChange(value => mat.color.set(value));
+
+              materialTracker[mat.name] = {
+                material: mat,
+                colorObj,
+              };
+            }
+          });
+        }
+      });
+
+      // Reset button
+      colorFolder.add({ reset: () => {
         for (const name in materialTracker) {
           const { material, colorObj } = materialTracker[name];
           const original = originalColors[name];
-          if (material && original) {
+          if (original) {
             colorObj.color = original;
             material.color.set(original);
           }
         }
         gui.updateDisplay();
-      }
-    };
+      }}, 'reset').name("↺ Reset Colors");
 
-    colorFolder.add(resetColors, 'reset').name("↺ Reset Colors");
-    colorFolder.open();
+      scene.add(gltf.scene);
+    }, undefined, (err) => {
+      console.error("Model load error:", err);
+    });
 
-    scene.add(gltf.scene);
-  }, undefined, (error) => {
-    console.error('Error loading model:', error);
-  });
+    // Animate
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      composer.render();
+    }
+    animate();
 
-  function animate() {
-    requestAnimationFrame(animate);
-    controls.update();
-    composer.render();
-  }
-
-  animate();
-
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    composer.setSize(window.innerWidth, window.innerHeight);
-  });
-
-</script>
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      composer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
 </body>
 </html>
