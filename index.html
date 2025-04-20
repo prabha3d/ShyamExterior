@@ -5,7 +5,6 @@
   <title>Three.js GLB Color GUI with Reset</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lil-gui@0.18/dist/lil-gui.min.css">
   <link rel="icon" href="data:,">
-
   <style>
     .lil-gui {
       --width: 300px;
@@ -19,28 +18,25 @@
     }
 
     #resetViewBtn {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    padding: 10px 16px;
-    background-color: #222;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    opacity: 0.8;
-    transition: all 0.2s ease;
-  }
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 16px;
+      background-color: #222;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      opacity: 0.8;
+      transition: all 0.2s ease;
+    }
 
-  #resetViewBtn:hover {
-    opacity: 1;
-    background-color: #000;
-  }
-
+    #resetViewBtn:hover {
+      opacity: 1;
+      background-color: #000;
+    }
   </style>
-
-  
 </head>
 <body>
 
@@ -52,30 +48,21 @@
     import { GLTFLoader } from 'https://esm.sh/three@0.160.1/examples/jsm/loaders/GLTFLoader.js';
     import { DRACOLoader } from 'https://esm.sh/three@0.160.1/examples/jsm/loaders/DRACOLoader.js';
     import GUI from 'https://cdn.jsdelivr.net/npm/lil-gui@0.18/+esm';
-    import { EffectComposer } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/EffectComposer.js';
-    import { RenderPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/RenderPass.js';
-    import { UnrealBloomPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/UnrealBloomPass.js';
-    import { SSAOPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/SSAOPass.js';
     import gsap from 'https://esm.sh/gsap';
 
-
-    // Scene setup
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xdddddd);
 
-    // Main camera
+    // Cameras
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(6, 4, 10);
-
     const mainCamera = camera;
 
-    // Alternate camera (top view example)
     const altCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     altCamera.position.set(0, 15, 0);
     altCamera.lookAt(0, 0, 0);
 
     let usingAltCamera = false;
-
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -84,13 +71,6 @@
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     document.body.appendChild(renderer.domElement);
 
-    // Postprocessing
-    // const composer = new EffectComposer(renderer);
-    // composer.addPass(new RenderPass(scene, camera));
-    // composer.addPass(new SSAOPass(scene, camera, window.innerWidth, window.innerHeight));
-    // composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.1, 0.4, 0.85));
-
-    // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.target.set(0, 4, -5);
     controls.enableDamping = true;
@@ -132,17 +112,15 @@
     ground.receiveShadow = true;
     scene.add(ground);
 
-    // Init lil-gui
+    // GUI
     const gui = new GUI({ width: 300 });
     const colorFolder = gui.addFolder("Colors");
     colorFolder.open();
 
-    // Track materials and colors
     const materialTracker = {};
     const originalColors = {};
 
-
-    // Load model
+    // Load GLB
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
     dracoLoader.setDecoderConfig({ type: 'js' });
@@ -181,7 +159,6 @@
         }
       });
 
-      // Reset button
       colorFolder.add({ reset: () => {
         for (const name in materialTracker) {
           const { material, colorObj } = materialTracker[name];
@@ -197,22 +174,20 @@
     }, undefined, (err) => {
       console.error("Model load error:", err);
     });
-    
-    
+
+    // Hotspot
     const hotspotMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffffff,     // White color
-    transparent: true,
-    opacity: 0.5         // 50% opacity
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.5
     });
 
     const hotspot = new THREE.Mesh(
       new THREE.SphereGeometry(0.1, 16, 16),
       hotspotMaterial
     );
-
-    hotspot.position.set(2, 1, -2); // Adjust to wherever you want the hotspot
+    hotspot.position.set(2, 1, -2);
     scene.add(hotspot);
-
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
@@ -225,67 +200,73 @@
       const intersects = raycaster.intersectObject(hotspot);
 
       if (intersects.length > 0) {
-  usingAltCamera = !usingAltCamera;
+        usingAltCamera = !usingAltCamera;
+        const targetCam = usingAltCamera ? altCamera : mainCamera;
 
-  const targetCam = usingAltCamera ? altCamera : mainCamera;
+        // Animate camera position
+        gsap.to(camera.position, {
+          duration: 1.5,
+          x: targetCam.position.x,
+          y: targetCam.position.y,
+          z: targetCam.position.z,
+          ease: "power2.inOut",
+          onUpdate: () => controls.update()
+        });
 
-  // Animate camera position
-  gsap.to(camera.position, {
-    duration: 1.5,
-    x: targetCam.position.x,
-    y: targetCam.position.y,
-    z: targetCam.position.z,
-    ease: "power2.inOut",
-    onUpdate: () => controls.update(),
-  });
+        // Animate target
+        const newTarget = usingAltCamera ? new THREE.Vector3(0, 0, 0) : new THREE.Vector3(0, 4, -5);
+        const tempTarget = controls.target.clone();
 
-  // Use a dummy vector to animate the orbit target
-  const targetVector = new THREE.Vector3().copy(controls.target);
-  const newTarget = usingAltCamera
-    ? new THREE.Vector3(0, 0, 0)
-    : new THREE.Vector3(0, 4, -5);
+        gsap.to(tempTarget, {
+          duration: 1.5,
+          x: newTarget.x,
+          y: newTarget.y,
+          z: newTarget.z,
+          ease: "power2.inOut",
+          onUpdate: () => {
+            controls.target.copy(tempTarget);
+            controls.update();
+          }
+        });
+      }
+    });
 
-  gsap.to(targetVector, {
-    duration: 1.5,
-    x: newTarget.x,
-    y: newTarget.y,
-    z: newTarget.z,
-    ease: "power2.inOut",
-    onUpdate: () => {
-      controls.target.copy(targetVector);
-      controls.update();
-    },
-  });
-}
+    // Reset view
+    document.getElementById("resetViewBtn").addEventListener("click", () => {
+      usingAltCamera = false;
+      gsap.to(camera.position, {
+        duration: 1.5,
+        x: 6, y: 4, z: 10,
+        ease: "power2.inOut"
+      });
+      const resetTarget = new THREE.Vector3(0, 4, -5);
+      const tempTarget = controls.target.clone();
 
-});
+      gsap.to(tempTarget, {
+        duration: 1.5,
+        x: resetTarget.x,
+        y: resetTarget.y,
+        z: resetTarget.z,
+        ease: "power2.inOut",
+        onUpdate: () => {
+          controls.target.copy(tempTarget);
+          controls.update();
+        }
+      });
+    });
 
-    
-    // Animate
     function animate() {
       requestAnimationFrame(animate);
       controls.update();
       renderer.render(scene, camera);
-
     }
     animate();
 
-    document.getElementById("resetViewBtn").addEventListener("click", () => {
-      camera.position.set(6, 4, 10);         // Reset camera position
-      controls.target.set(0, 4, -5);         // Reset orbit target
-      controls.update();
-    });
-
-    // Handle window resize
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-      // composer.setSize(window.innerWidth, window.innerHeight);
     });
   </script>
-
-
-
 </body>
 </html>
