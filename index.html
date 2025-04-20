@@ -97,7 +97,7 @@
     // Hotspot
     const hotspot = new THREE.Mesh(
       new THREE.SphereGeometry(0.1, 16, 16),
-      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 })
+      new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.5 })
     );
     hotspot.position.set(2, 3, -2);
     scene.add(hotspot);
@@ -117,6 +117,32 @@
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
+    let isHoveringHotspot = false;
+
+    // Update on mouse move for hover detection
+    window.addEventListener('mousemove', (event) => {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObject(hotspot);
+
+      if (intersects.length > 0) {
+        if (!isHoveringHotspot) {
+          isHoveringHotspot = true;
+          // Hover effect: increase opacity and scale
+          hotspot.material.opacity = 0.5;
+          hotspot.scale.set(1.1, 1.1, 1.1);  // Scale up by 10%
+        }
+      } else {
+        if (isHoveringHotspot) {
+          isHoveringHotspot = false;
+          // Revert to original opacity and scale
+          hotspot.material.opacity = 0.25;
+          hotspot.scale.set(1, 1, 1);
+        }
+      }
+    });
 
     window.addEventListener('click', (event) => {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
