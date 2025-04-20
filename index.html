@@ -199,25 +199,27 @@
     });
     
     
+    const hotspotMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffffff,     // White color
+    transparent: true,
+    opacity: 0.5         // 50% opacity
+    });
+
     const hotspot = new THREE.Mesh(
-    new THREE.SphereGeometry(0.2, 32, 32),
-    new THREE.MeshBasicMaterial({ color: 0xff0000 })
+      new THREE.SphereGeometry(0.1, 16, 16),
+      hotspotMaterial
     );
-    hotspot.position.set(2, 1, -2); // Adjust to wherever you want the hotspot
-    scene.add(hotspot);
+
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
     window.addEventListener('click', (event) => {
-      let usingAltCamera = false;
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-window.addEventListener('click', (event) => {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObject(hotspot);
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObject(hotspot);
 
   if (intersects.length > 0) {
     usingAltCamera = !usingAltCamera;
@@ -254,9 +256,7 @@ window.addEventListener('click', (event) => {
   }
 });
 
-    });
-
-
+    
     // Animate
     function animate() {
       requestAnimationFrame(animate);
