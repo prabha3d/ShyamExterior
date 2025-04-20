@@ -90,7 +90,7 @@
       new THREE.SphereGeometry(0.1, 16, 16),
       new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 })
     );
-    hotspot.position.set(2, 1, -2);
+    hotspot.position.set(2, 2, -2);
     scene.add(hotspot);
 
     const views = {
@@ -121,7 +121,7 @@
         const view = usingAltCamera ? views.alt : views.main;
 
         gsap.to(camera.position, {
-          duration: 1.5,
+          duration: 1,
           x: view.position.x,
           y: view.position.y,
           z: view.position.z,
@@ -131,7 +131,7 @@
 
         const tempTarget = controls.target.clone();
         gsap.to(tempTarget, {
-          duration: 1.5,
+          duration: 1,
           x: view.target.x,
           y: view.target.y,
           z: view.target.z,
@@ -150,7 +150,7 @@
       const view = views.main;
 
       gsap.to(camera.position, {
-        duration: 1.5,
+        duration: 1,
         x: view.position.x,
         y: view.position.y,
         z: view.position.z,
@@ -159,7 +159,7 @@
 
       const tempTarget = controls.target.clone();
       gsap.to(tempTarget, {
-        duration: 1.5,
+        duration: 1,
         x: view.target.x,
         y: view.target.y,
         z: view.target.z,
