@@ -224,39 +224,40 @@
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObject(hotspot);
 
-  if (intersects.length > 0) {
-    usingAltCamera = !usingAltCamera;
+      if (intersects.length > 0) {
+  usingAltCamera = !usingAltCamera;
 
-    const targetCam = usingAltCamera ? altCamera : mainCamera;
+  const targetCam = usingAltCamera ? altCamera : mainCamera;
 
-    // Animate camera position
-    gsap.to(camera.position, {
-      duration: 1.5,
-      x: targetCam.position.x,
-      y: targetCam.position.y,
-      z: targetCam.position.z,
-      ease: "power2.inOut",
-      onUpdate: () => controls.update(),
-    });
+  // Animate camera position
+  gsap.to(camera.position, {
+    duration: 1.5,
+    x: targetCam.position.x,
+    y: targetCam.position.y,
+    z: targetCam.position.z,
+    ease: "power2.inOut",
+    onUpdate: () => controls.update(),
+  });
 
-    // Animate orbit target
-    const currentTarget = controls.target.clone();
-    const newTarget = usingAltCamera
-      ? new THREE.Vector3(0, 0, 0)         // <- your alt target
-      : new THREE.Vector3(0, 4, -5);      // <- your default target
+  // Use a dummy vector to animate the orbit target
+  const targetVector = new THREE.Vector3().copy(controls.target);
+  const newTarget = usingAltCamera
+    ? new THREE.Vector3(0, 0, 0)
+    : new THREE.Vector3(0, 4, -5);
 
-    gsap.to(currentTarget, {
-      duration: 1.5,
-      x: newTarget.x,
-      y: newTarget.y,
-      z: newTarget.z,
-      ease: "power2.inOut",
-      onUpdate: () => {
-        controls.target.copy(currentTarget);
-        controls.update();
-      }
-    });
-  }
+  gsap.to(targetVector, {
+    duration: 1.5,
+    x: newTarget.x,
+    y: newTarget.y,
+    z: newTarget.z,
+    ease: "power2.inOut",
+    onUpdate: () => {
+      controls.target.copy(targetVector);
+      controls.update();
+    },
+  });
+}
+
 });
 
     
