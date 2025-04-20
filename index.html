@@ -68,8 +68,6 @@
     camera.position.set(6, 4, 10);
 
     const mainCamera = camera;
-    const altCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    altCamera.position.set(2, 6, -5); // Adjust for your scene
 
     // Alternate camera (top view example)
     const altCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -77,6 +75,7 @@
     altCamera.lookAt(0, 0, 0);
 
     let usingAltCamera = false;
+
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
