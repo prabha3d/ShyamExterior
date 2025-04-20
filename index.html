@@ -56,6 +56,8 @@
     import { RenderPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/RenderPass.js';
     import { UnrealBloomPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/UnrealBloomPass.js';
     import { SSAOPass } from 'https://esm.sh/three@0.160.1/examples/jsm/postprocessing/SSAOPass.js';
+    import gsap from 'https://esm.sh/gsap';
+
 
     // Scene setup
     const scene = new THREE.Scene();
@@ -205,17 +207,50 @@
     const mouse = new THREE.Vector2();
 
     window.addEventListener('click', (event) => {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      let usingAltCamera = false;
 
-      raycaster.setFromCamera(mouse, usingAltCamera ? altCamera : camera);
-      const intersects = raycaster.intersectObject(hotspot);
+window.addEventListener('click', (event) => {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-      if (intersects.length > 0) {
-        usingAltCamera = !usingAltCamera;
-        controls.object = usingAltCamera ? altCamera : camera;
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObject(hotspot);
+
+  if (intersects.length > 0) {
+    usingAltCamera = !usingAltCamera;
+
+    const targetCam = usingAltCamera ? altCamera : mainCamera;
+
+    // Animate camera position
+    gsap.to(camera.position, {
+      duration: 1.5,
+      x: targetCam.position.x,
+      y: targetCam.position.y,
+      z: targetCam.position.z,
+      ease: "power2.inOut",
+      onUpdate: () => controls.update(),
+    });
+
+    // Animate orbit target
+    const currentTarget = controls.target.clone();
+    const newTarget = usingAltCamera
+      ? new THREE.Vector3(0, 0, 0)         // <- your alt target
+      : new THREE.Vector3(0, 4, -5);      // <- your default target
+
+    gsap.to(currentTarget, {
+      duration: 1.5,
+      x: newTarget.x,
+      y: newTarget.y,
+      z: newTarget.z,
+      ease: "power2.inOut",
+      onUpdate: () => {
+        controls.target.copy(currentTarget);
         controls.update();
       }
+    });
+  }
+});
+
     });
 
 
@@ -223,7 +258,7 @@
     function animate() {
       requestAnimationFrame(animate);
       controls.update();
-      renderer.render(scene, usingAltCamera ? altCamera : camera);
+      renderer.render(scene, camera);
 
     }
     animate();
