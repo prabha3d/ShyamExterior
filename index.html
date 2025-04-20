@@ -90,7 +90,7 @@
       new THREE.SphereGeometry(0.1, 16, 16),
       new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 })
     );
-    hotspot.position.set(2, 2, -2);
+    hotspot.position.set(2, 3, -2);
     scene.add(hotspot);
 
     const views = {
@@ -99,7 +99,7 @@
         target: new THREE.Vector3(0, 4, -5),
       },
       alt: {
-        position: new THREE.Vector3(0, 15, 0),
+        position: new THREE.Vector3(6, 4, 12),
         target: new THREE.Vector3(0, 0, 0),
       }
     };
