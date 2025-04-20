@@ -61,8 +61,16 @@
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xdddddd);
 
+    // Main camera
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(6, 4, 10);
+
+    // Alternate camera (top view example)
+    const altCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    altCamera.position.set(0, 15, 0);
+    altCamera.lookAt(0, 0, 0);
+
+    let usingAltCamera = false;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -184,12 +192,39 @@
     }, undefined, (err) => {
       console.error("Model load error:", err);
     });
+    
+    
+    const hotspot = new THREE.Mesh(
+    new THREE.SphereGeometry(0.2, 32, 32),
+    new THREE.MeshBasicMaterial({ color: 0xff0000 })
+    );
+    hotspot.position.set(2, 1, -2); // Adjust to wherever you want the hotspot
+    scene.add(hotspot);
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    window.addEventListener('click', (event) => {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, usingAltCamera ? altCamera : camera);
+      const intersects = raycaster.intersectObject(hotspot);
+
+      if (intersects.length > 0) {
+        usingAltCamera = !usingAltCamera;
+        controls.object = usingAltCamera ? altCamera : camera;
+        controls.update();
+      }
+    });
+
 
     // Animate
     function animate() {
       requestAnimationFrame(animate);
       controls.update();
-      renderer.render(scene, camera);
+      renderer.render(scene, usingAltCamera ? altCamera : camera);
+
     }
     animate();
 
