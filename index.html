@@ -186,7 +186,7 @@
       new THREE.SphereGeometry(0.1, 16, 16),
       hotspotMaterial
     );
-    hotspot.position.set(2, 1, -2);
+    hotspot.position.set(2, 1, 0);
     scene.add(hotspot);
 
     const raycaster = new THREE.Raycaster();
@@ -205,7 +205,7 @@
 
         // Animate camera position
         gsap.to(camera.position, {
-          duration: 1.5,
+          duration: .25,
           x: targetCam.position.x,
           y: targetCam.position.y,
           z: targetCam.position.z,
@@ -218,7 +218,7 @@
         const tempTarget = controls.target.clone();
 
         gsap.to(tempTarget, {
-          duration: 1.5,
+          duration: .25,
           x: newTarget.x,
           y: newTarget.y,
           z: newTarget.z,
