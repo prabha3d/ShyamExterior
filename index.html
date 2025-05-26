@@ -61,7 +61,20 @@
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     document.body.appendChild(renderer.domElement);
 
+    // const controls = new OrbitControls(camera, renderer.domElement);
+    // controls.target.set(0, 4, -5);
+    // controls.minDistance = 5;
+    // controls.maxDistance = 30;
+    // controls.minAzimuthAngle = -Math.PI / 12;
+    // controls.maxAzimuthAngle = Math.PI / 2;
+    // controls.minPolarAngle = Math.PI / 2.5;
+    // controls.maxPolarAngle = Math.PI / 1.75;
+    // controls.update();
+
     const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; // Smooth movement
+    controls.dampingFactor = 0.05;
+
     controls.target.set(0, 4, -5);
     controls.minDistance = 5;
     controls.maxDistance = 30;
@@ -70,6 +83,7 @@
     controls.minPolarAngle = Math.PI / 2.5;
     controls.maxPolarAngle = Math.PI / 1.75;
     controls.update();
+
 
     const ambient = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
     scene.add(ambient);
@@ -162,27 +176,51 @@
         usingAltCamera = !usingAltCamera;
         const view = usingAltCamera ? views.alt : views.main;
 
-        gsap.to(camera.position, {
-          duration: 1,
-          x: view.position.x,
-          y: view.position.y,
-          z: view.position.z,
-          ease: "power2.inOut",
-          onUpdate: () => controls.update(),
-        });
+        // gsap.to(camera.position, {
+        //   duration: 1,
+        //   x: view.position.x,
+        //   y: view.position.y,
+        //   z: view.position.z,
+        //   ease: "power2.inOut",
+        //   onUpdate: () => controls.update(),
+        // });
 
-        const tempTarget = controls.target.clone();
-        gsap.to(tempTarget, {
-          duration: 1,
-          x: view.target.x,
-          y: view.target.y,
-          z: view.target.z,
-          ease: "power2.inOut",
-          onUpdate: () => {
-            controls.target.copy(tempTarget);
-            controls.update();
-          },
-        });
+        // const tempTarget = controls.target.clone();
+        // gsap.to(tempTarget, {
+        //   duration: 1,
+        //   x: view.target.x,
+        //   y: view.target.y,
+        //   z: view.target.z,
+        //   ease: "power2.inOut",
+        //   onUpdate: () => {
+        //     controls.target.copy(tempTarget);
+        //     controls.update();
+        //   },
+        // });
+        gsap.to(camera.position, {
+        duration: 1,
+        x: view.position.x,
+        y: view.position.y,
+        z: view.position.z,
+        ease: "power2.inOut",
+        onUpdate: () => controls.update(),
+      });
+
+      gsap.to({ x: controls.target.x, y: controls.target.y, z: controls.target.z }, {
+        duration: 1,
+        x: view.target.x,
+        y: view.target.y,
+        z: view.target.z,
+        ease: "power2.inOut",
+        onUpdate: function () {
+          controls.target.set(this.targets()[0].x, this.targets()[0].y, this.targets()[0].z);
+          controls.update();
+        },
+      });
+
+
+
+
       }
     });
 
